@@ -74,18 +74,34 @@ numberOfEpochs = 1
             #ax.plot(x, y)
             #plt.show()
 
-for m in range(480):
-      for i in range(22):
-            x_train = np.transpose(data[i] / np.max(data))
-            x_train = np.array(x_train[m])
-            #print(x_train.shape)
-            y_train = np.eye(22)[i, :]
-            #y_train = np.array(y_train)
-            #print(y_train)
-            #y_train = np.array(1)            
-            model.fit(x_train, y_train, epochs=numberOfEpochs)
+#for m in range(480):
+#for i in range(22):
+#      x_train = np.transpose(data[i] / np.max(data))
+#      #x_train = np.array(x_train[m])
+#      #print(x_train[0].shape)
+#      oneHotVector = (np.eye(22)[:, i])
+#      y_train = np.tile(oneHotVector, (480, 1))
+#      #y_train = np.array(y_train)
+#      #print(y_train)
+#      #y_train = np.array(1)            
 
-prediction = [] 
+x_train = data
+
+y_train = np.array([])
+
+for i in range(22):
+      oneHotVector = (np.eye(22)[:, i])
+      matrix = np.tile(oneHotVector, (480, 1))
+      np.append(y_train, matrix)
+
+y_train = np.array(y_train)
+
+
+model.fit(x_train, y_train, epochs=numberOfEpochs)
+
+
+
+#prediction = [] 
 #for n in range(22):
 #      print('now predicting: ' + str(n))
 #      for o in range(480):
