@@ -1,9 +1,8 @@
 import tensorflow as tf
-from tensorflow import keras
-from keras.optimizers import Adam
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import random
 
 # Training auf GPU verlagern
 #physical_devices = tf.config.experimental.list_physical_devices
@@ -46,60 +45,62 @@ for datei in os.listdir(RELPATH):
                 #print(f'Größe der Matrix aus {datei}: {size}')
                 index += 1
 
-# Erstellen des Modells bzw. Neuronalen Netzes 
 
-# Sequential Model -> Feed-Forward Model 
-model = tf.keras.models.Sequential()
-
-#model.add(tf.keras.layers.Flatten()) # noch keine Ahnung was das bedeutet (Nacharbeiten)
-
-# erste Schicht des NN mit 52 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
-model.add(tf.keras.layers.Dense(52, activation = tf.nn.relu)) # Vorlesung
-# zweite Schicht des NN mit 128 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
-model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
-# Ausgangsschicht des NN mit 22 Neuronen, da es 21 Fälle gibt. ie Aktivierungsfunktion ist hier eine Wahrscheinlichkeitsverteilung
-#model.add(tf.keras.layers.Dense(22,  activation = tf.nn.relu)) #stimmt so noch nicht mit 22 Fällen 
-model.add(tf.keras.layers.Dense(22, activation = tf.nn.softmax))
-
-model.compile(optimizer='adam',
-             loss='sparse_categorical_crossentropy',
-             metrics=['accuracy'])
-
-numberOfEpochs = 1
 
 #falls geplottet werden soll
             #x = np.arange(480)
             #y = np.vstack(np.transpose(data[i]))
             #fig, ax = plt.subplots()
             #ax.plot(x, y)
-            #plt.show()
+            #plt.show()       
 
-#for m in range(480):
-#for i in range(22):
-#      x_train = np.transpose(data[i] / np.max(data))
-#      #x_train = np.array(x_train[m])
-#      #print(x_train[0].shape)
-#      oneHotVector = (np.eye(22)[:, i])
-#      y_train = np.tile(oneHotVector, (480, 1))
-#      #y_train = np.array(y_train)
-#      #print(y_train)
-#      #y_train = np.array(1)            
-
-x_train = data
-
-y_train = np.array([])
+training_data = []
 
 for i in range(22):
-      oneHotVector = (np.eye(22)[:, i])
-      matrix = np.tile(oneHotVector, (480, 1))
-      np.append(y_train, matrix)
+      #label
+      oneHotVector = np.eye(22)[i, :]
+      fault_data = np.transpose(data[i] / np.max(data))
 
+      for k in range(480):
+            training_data.append([fault_data[k], oneHotVector])
+
+random.shuffle(training_data)
+
+x_train = []
+y_train = []
+
+for testvalues, label in training_data:
+      x_train.append(testvalues)
+      y_train.append(label)
+
+x_train = np.array(x_train)
 y_train = np.array(y_train)
 
+# Erstellen des Modells bzw. Neuronalen Netzes 
+
+# Sequential Model -> Feed-Forward Model 
+model = tf.keras.models.Sequential()
+
+#model.add(tf.keras.layers.Flatten()) # noch keine Ahnung was das bedeutet (Nacharbeiten)
+model.add(tf.keras.layers.Dense(52, activation=tf.nn.relu))#, input_shape = x_train.shape[1:]))
+# erste Schicht des NN mit 52 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
+#model.add(tf.keras.layers.Dense(52, activation = tf.nn.relu)) # Vorlesung
+# zweite Schicht des NN mit 128 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
+model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
+# Ausgangsschicht des NN mit 22 Neuronen, da es 21 Fälle gibt. ie Aktivierungsfunktion ist hier eine Wahrscheinlichkeitsverteilung
+model.add(tf.keras.layers.Dense(22, activation = tf.nn.softmax))
+
+model.compile(optimizer='adam',
+             loss='categorical_crossentropy',
+             metrics=['accuracy'])
+
+numberOfEpochs = 100
+
+print(x_train.shape)
+print(y_train.shape)
 
 model.fit(x_train, y_train, epochs=numberOfEpochs)
-
-
 
 #prediction = [] 
 #for n in range(22):
@@ -109,10 +110,6 @@ model.fit(x_train, y_train, epochs=numberOfEpochs)
 #            print(np.argmax(model.predict(np.transpose(dataTE[n])[m])))
 
 
-#x_train = np.array(data / np.max(data))
-#print(x_train.shape)
-#y_train = np.arange(22)
-#model.fit(x_train, y_train, epochs=1000) # läuft einigermaßen
 
 
 print('done without error lol how come')
