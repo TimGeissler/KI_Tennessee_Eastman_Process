@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[24]:
 
 
 from tensorflow.keras.models import Sequential
@@ -12,226 +12,114 @@ from tensorflow.keras import layers, models
 import numpy as np
 from tensorflow.keras import regularizers
 
+# In[]:
+def load_dat(path, input_end, sens, crop_start, crop_stop, flip=False):
+    try:
+        with open(path, 'r') as file:
+            # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
+            lines = file.read().splitlines()
 
-# TensorFlow wird nicht benötigt, es sei denn, Sie verwenden es anderswo in Ihrem Code
-# import tensorflow as tf
+            # Die Daten in eine Matrix umwandeln
+            data = [list(map(float, line.split()[:input_end])) for line in lines]
+            data = np.array(data)
+            if flip:
+                data = np.transpose(data)
+            data = data[crop_start:crop_stop, sens]
 
- #Öffnen der .dat-Datei im Lesemodus
-file_path = '/Users/justinolivieri/Desktop/Künstliche Intelligenz/d00.dat'
 
-try:
-    with open(file_path, 'r') as file:
-        # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
-        lines = file.read().splitlines()
 
-        # Die Daten in eine Matrix umwandeln
-        data_matrix = [list(map(float, line.split()[:480])) for line in lines]
-        data_matrix = np.array(data_matrix)
-        data_matrix = data_matrix[[1,2,6,12,15,18], 100:150]
-        #data_matrix = np.transpose(data_matrix)
-        
-
-    # Größe der neuen Matrix ausgeben
-    new_matrix_size = (len(data_matrix), len(data_matrix[0]))
-    print(f"Größe der Trainingsdaten Matrix: {new_matrix_size}")
-
-except FileNotFoundError:
-    print(f'Die Datei {file_path} wurde nicht gefunden.')
-
-except Exception as e:
-    print(f'Fehler beim Lesen der Datei: {str(e)}')
-
-    
-#Einlesen der Testdaten 
-file_path = '/Users/justinolivieri/Desktop/Künstliche Intelligenz/d00_te.dat'
-
-try:
-    with open(file_path, 'r') as file:
-        # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
-        lines = file.read().splitlines()
-
-        # Die Daten in eine Matrix umwandeln
-        data_matrix_te0 = [list(map(float, line.split()[:52])) for line in lines]
-        data_matrix_te0 = np.array(data_matrix_te0)
-        data_matrix_te0 = np.transpose(data_matrix_te0)
-        data_matrix_te0 = data_matrix_te0[:, :480]
-        data_matrix_te0 = data_matrix_te0[[1,2,6,12,15,18], 100:150]
-        #data_matrix_te0 = np.transpose(data_matrix_te0)
-        
         # Größe der neuen Matrix ausgeben
-        new_matrix_size_te0 = (len(data_matrix_te0), len(data_matrix_te0[0]))
-        print(f"Größe der Testdaten Matrix: {new_matrix_size_te0}")
+        new_size = (len(data), len(data[0]))
+        print(f"Größe der Trainingsdaten Matrix: {new_size}")
+        return data, new_size
 
-except FileNotFoundError:
-    print(f'Die Datei {file_path} wurde nicht gefunden.')
+    except FileNotFoundError:
+        print(f'Die Datei {path} wurde nicht gefunden.')
 
-except Exception as e:
-   print(f'Fehler beim Lesen der Datei: {str(e)}')
-
-
-# In[2]:
+    except Exception as e:
+        print(f'Fehler beim Lesen der Datei: {str(e)}')
 
 
-file_path = '/Users/justinolivieri/Desktop/Künstliche Intelligenz/d01.dat'
+# In[]:
+def build_model(input_shape, output_shape):
+    # Sequential Model -> Feed-Forward Model
+    model = Sequential()
+    model.add(Dense(64, input_shape=(input_shape,), activation='relu'))#, kernel_regularizer=regularizers.l2(0.01)))
+    model.add(layers.Dropout(0.5))
+    model.add(Dense(32, activation='relu'))#, kernel_regularizer=regularizers.l2(0.01)))
+    model.add(layers.Dropout(0.05))
+    model.add(Dense(output_shape, activation='softmax'))
 
-try:
-    with open(file_path, 'r') as file:
-        # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
-        lines = file.read().splitlines()
-
-        # Die Daten in eine Matrix umwandeln
-        data_matrix1 = [list(map(float, line.split())) for line in lines]
-        data_matrix1 = np.array(data_matrix1)
-        data_matrix1 = np.transpose(data_matrix1)
-        data_matrix1 = data_matrix1[:, :480]
-        data_matrix1 = data_matrix1[[1,2,6,12,15,18], 100:150]
-        #data_matrix1 = np.transpose(data_matrix1)
-
-        #Größe der Matrix ausgeben
-        matrix_size1 = (len(data_matrix1), len(data_matrix1[0]))
-        print(f"Größe der Trainingsdatenmatrix: {matrix_size1}")
-
-except FileNotFoundError:
-    print(f'Die Datei {file_path} wurde nicht gefunden.')
-
-except Exception as e:
-    print(f'Fehler beim Lesen der Datei: {str(e)}')
-
-#Einlesen der Testdaten 
-file_path = '/Users/justinolivieri/Desktop/Künstliche Intelligenz/d01_te.dat'
-
-try:
-    with open(file_path, 'r') as file:
-        # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
-        lines = file.read().splitlines()
-        
-         # Die Daten in eine Matrix umwandeln
-        data_matrix_te1 = [list(map(float, line.split()[:52])) for line in lines]
-        data_matrix_te1 = np.array(data_matrix_te1)
-        data_matrix_te1 = np.transpose(data_matrix_te1)
-        data_matrix_te1 = data_matrix_te1[:, :480]
-        data_matrix_te1 = data_matrix_te1[[1,2,6,12,15,18], 100:150]
-        #data_matrix_te1 = np.transpose(data_matrix_te1)
-        
-        # Größe der neuen Matrix ausgeben
-        new_matrix_size_te1 = (len(data_matrix_te1), len(data_matrix_te1[0]))
-        print(f"Größe der Testdaten Matrix: {new_matrix_size_te1}")
-    
-except FileNotFoundError:
-    print(f'Die Datei {file_path} wurde nicht gefunden.')
-
-except Exception as e:
-    print(f'Fehler beim Lesen der Datei: {str(e)}')
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+    return model
 
 
-# In[ ]:
+# In[]:
+data_matrix, new_matrix_size = load_dat(path='/Users/justinolivieri/Desktop/Künstliche Intelligenz/d00.dat',
+                                        input_end=480,
+                                        sens=[1, 2, 6, 12, 15, 18],
+                                        crop_start=0,
+                                        crop_stop=380,
+                                        flip=True)
 
 
+data_matrix_te0, new_matrix_size_te0 = load_dat(path='/Users/justinolivieri/Desktop/Künstliche Intelligenz/d00_te.dat',
+                                                input_end=480,
+                                                sens=[1, 2, 6, 12, 15, 18],
+                                                crop_start=0,
+                                                crop_stop=380)
 
 
+data_matrix1, matrix_size1 = load_dat(path='/Users/justinolivieri/Desktop/Künstliche Intelligenz/d01.dat',
+                                      input_end=480,
+                                      sens=[1, 2, 6, 12, 15, 18],
+                                      crop_start=0,
+                                      crop_stop=380)
 
-# In[ ]:
 
+data_matrix_te1, new_matrix_size_te1 = load_dat(path='/Users/justinolivieri/Desktop/Künstliche Intelligenz/d01_te.dat',
+                                                input_end=480,
+                                                sens=[1, 2, 6, 12, 15, 18],
+                                                crop_start=0,
+                                                crop_stop=380)
+
+
+# In[]:
+data_matrix_label = np.zeros(data_matrix.shape[0])
+data_matrix_te0_label = np.zeros(data_matrix_te0.shape[0])
+
+data_matrix1_label = np.zeros(data_matrix1.shape[0]) + 1
+data_matrix_te1_label = np.zeros(data_matrix_te1.shape[0]) + 1
+
+train_data = np.vstack((data_matrix, data_matrix1))
+train_data_label = np.hstack((data_matrix_label, data_matrix1_label))
+train_data_label = to_categorical(train_data_label, num_classes=2)
+
+test_data = np.vstack((data_matrix_te0, data_matrix_te1))
+test_data_label = np.hstack((data_matrix_te0_label, data_matrix_te1_label))
+test_data_label = to_categorical(test_data_label, num_classes=2)
 
 
 
+# In[]:
+x_train = train_data/np.linalg.norm(train_data, axis=0)
+y_train = train_data_label
 
-# In[3]:
+x_test = test_data/np.linalg.norm(test_data, axis=0) #saklierung keine normierung L2 Normierung
+y_test = test_data_label
 
-
-# Erstellen des Modells bzw. Neuronalen Netzes 
-
-# Sequential Model -> Feed-Forward Model 
-model = Sequential()
-model.add(Dense(16, input_shape=(50,), activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-model.add(layers.Dropout(0.5))
-model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-model.add(layers.Dropout(0.5))
-model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-model.add(layers.Dropout(0.5))
-model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-model.add(layers.Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
-
-
-model.compile(optimizer='adam',
-             loss='categorical_crossentropy',
-             metrics=['accuracy'])
-
-
-# In[5]:
-
-
-x_train = data_matrix/np.linalg.norm(data_matrix, axis=0)
-y_train = np.array([1, 0, 0, 0, 0, 0])
-
-x_test = data_matrix_te0/np.linalg.norm(data_matrix_te0, axis=0) #saklierung keine normierung L2 Normierung 
-y_test = y_train
-
-y_train_one_hot = to_categorical(y_train, num_classes=2)
-y_test_one_hot = to_categorical(y_test, num_classes=2)
-
-
-# In[ ]:
-
-
-
-
-
-# In[6]:
-
-
-x_train1 = data_matrix1/np.linalg.norm(data_matrix1, axis=0)
-
-y_train1 = np.array([0, 0, 0, 0, 0, 1])
-
-x_test1 = data_matrix_te1/np.linalg.norm(data_matrix_te1, axis=0)
-y_test1 = y_train1
-
-y_train_one_hot1 = to_categorical(y_train1, num_classes=2)
-y_test_one_hot1 = to_categorical(y_test1, num_classes=2)
 
 
 # In[7]:
+model = build_model(input_shape=6, output_shape=2)
 
 
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train, y_train_one_hot, epochs=1, validation_data=(x_test, y_test_one_hot))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-model.fit(x_train1, y_train_one_hot1, epochs=1, validation_data=(x_test1, y_test_one_hot1))
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[8]:
+model.fit(x_train, y_train,
+          epochs=50,
+          validation_data=(x_test, y_test),
+          shuffle=True)
 
 
 model.save('DFF_NN_V2.model')
@@ -245,14 +133,7 @@ predictions = new_model.predict([x_test])
 print(predictions)
 
 
-# In[10]:
-
-
-predictions = new_model.predict([x_test1])
-print(predictions)
-
-
-# In[ ]:
+# In[11]:
 
 
 
