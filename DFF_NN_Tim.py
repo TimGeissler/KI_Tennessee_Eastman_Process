@@ -20,7 +20,7 @@ indexTE = 0
 for datei in os.listdir(RELPATH):
     filePath = RELPATH + datei
 
-    #print('Look, i found a file: ' + filePath)
+    print('Look, i found a file: ' + filePath)
 
     if 'te' in datei:
         with open(filePath, 'r') as file:
@@ -95,12 +95,13 @@ model.compile(optimizer='adam',
              loss='categorical_crossentropy',
              metrics=['accuracy'])
 
-numberOfEpochs = 100
+numberOfEpochs = 10
 
-print(x_train.shape)
-print(y_train.shape)
+#print(x_train.shape)
+#print(y_train.shape)
+print(y_train[0])
 
-model.fit(x_train, y_train, epochs=numberOfEpochs)
+#model.fit(x_train, y_train, epochs=numberOfEpochs)
 
 #prediction = [] 
 #for n in range(22):
