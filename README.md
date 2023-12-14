@@ -12,3 +12,8 @@ https://youtu.be/WvoLTXIjBYU?si=QpeINelNyx-BYFI4
 ## Justin, Paul, Tim - 14.12.2023
 Termin an der HSD
 Ergebnis: erster Erfolg beim Training des NN, erste Auswertungen
+
+## Tim - 14.12.2023
+Habe keine vernünftige Shuffle-Funktion finden können, der man auch einfach eine batch-Size übergeben kann. 
+Daher habe ich eine Methode geschrieben, die das kann (siehe DFF_NN_TimV2). 
+Überprüft die gerne Mal und wenn sie gut ist und euch gefällt, können wir die im gemeinsamen file nutzen.
