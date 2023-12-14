@@ -72,15 +72,15 @@ for i in range(22):
     for k in range(52):
         normOfSensorData = np.linalg.norm(data_raw[i][k])
         normOfSensorDataTE = np.linalg.norm(dataTE_raw[i][k])
+        meanOfSensorData = np.mean(data_raw[i][k])
+        meanOfSensorDataTE = np.mean(dataTE_raw[i][k])
         
         array3rdD = []
         array3rdDTE = []
             
         for m in range(480):
-            array3rdD.append(data_raw[i][k][m]/normOfSensorData)
-
-        for p in range(960):
-            array3rdDTE.append(dataTE_raw[i][k][p]/normOfSensorDataTE)
+            array3rdD.append((data_raw[i][k][m] - meanOfSensorData)/normOfSensorData)
+            array3rdDTE.append((dataTE_raw[i][k][m] - meanOfSensorDataTE)/normOfSensorDataTE) ### clean up
 
         array2ndD.append(array3rdD)
         array2ndDTE.append(array3rdDTE)
@@ -91,7 +91,10 @@ for i in range(22):
 data_norm = np.array(data_norm)
 dataTE_norm = np.array(dataTE_norm)
 
+
 # Debug 
+# print(np.max(data_norm))
+# print(np.min(data_norm))
 #print(data_norm)
 #print(dataTE_norm.shape)
 
@@ -104,20 +107,23 @@ dataTE_norm = np.array(dataTE_norm)
 # aus normierter Matrix Trainigsdaten erstellen
 
 training_data = []
+test_data = []
 
 for i in range(22):
       # hier label erzeugen -> one-hot vector
       oneHotVector = np.eye(22)[i, :]
       fault_data = np.transpose(data_norm[i])
+      fault_dataTE = np.transpose(dataTE_norm[i])
 
       for k in range(480):
             training_data.append([fault_data[k], oneHotVector])
+            test_data.append([fault_dataTE[k], oneHotVector])
 
 # durchmischen
 
 random.shuffle(training_data) # anpassen mit tf-Funktion mit batch-size etc.
 
-
+### Training data
 x_train = []
 y_train = []
 
@@ -128,6 +134,18 @@ for testvalues, label in training_data:
 x_train = np.array(x_train)
 y_train = np.array(y_train)
 
+
+#### Test data
+x_test = []
+y_test = []
+
+for testvalues, label in test_data:
+      x_test.append(testvalues)
+      y_test.append(label)
+
+x_test = np.array(x_test)
+y_test = np.array(y_test)
+
 ####################################################################################
 # Erstellen des Modells bzw. Neuronalen Netzes 
 
@@ -135,12 +153,15 @@ y_train = np.array(y_train)
 model = tf.keras.models.Sequential()
 
 #model.add(tf.keras.layers.Flatten()) # noch keine Ahnung was das bedeutet (Nacharbeiten)
-model.add(tf.keras.layers.Dense(52, activation=tf.nn.relu))#, input_shape = x_train.shape[1:]))
+model.add(tf.keras.layers.Dense(52, activation=tf.nn.relu))
+#model.add(tf.keras.layers.Dropout(0.2))#, input_shape = x_train.shape[1:]))
 # erste Schicht des NN mit 52 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
 #model.add(tf.keras.layers.Dense(52, activation = tf.nn.relu)) # Vorlesung
 # zweite Schicht des NN mit 128 Neuronen und der Aktivierungsfunktion (z.B Sprungfunktion, Sigmoid-Funktion (Schwanenhals-Funktion))
 model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
+#model.add(tf.keras.layers.Dropout(0.2))
 model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
+#model.add(tf.keras.layers.Dropout(0.2))
 # Ausgangsschicht des NN mit 22 Neuronen, da es 21 Fälle gibt. ie Aktivierungsfunktion ist hier eine Wahrscheinlichkeitsverteilung
 model.add(tf.keras.layers.Dense(22, activation = tf.nn.softmax))
 
@@ -148,20 +169,33 @@ model.compile(optimizer='adam',
              loss='categorical_crossentropy',
              metrics=['accuracy'])
 
-numberOfEpochs = 1000
+numberOfEpochs = 100
 
 #print(x_train.shape)
 #print(y_train.shape)
 #print(y_train[0])
 
-model.fit(x_train, y_train, epochs=numberOfEpochs)
+model.fit(x_train, y_train, epochs=numberOfEpochs,validation_data=(x_test, y_test))
 
-#prediction = [] 
-#for n in range(22):
-#      print('now predicting: ' + str(n))
-#      for o in range(480):
-#            prediction.append(model.predict(np.transpose(dataTE[n])[m]))
-#            print(np.argmax(model.predict(np.transpose(dataTE[n])[m])))
+predictions = model.predict([x_test])
+print(predictions.shape)
+
+predictions_vector = []
+y_test_vector = []
+for i in range(10560):
+    predictions_vector.append(np.argmax(predictions[i]))
+    y_test_vector.append(np.argmax(y_test[i]))
+
+predictions_vector = np.array(predictions_vector)
+y_test_vector = np.array(y_test_vector)
+
+plt.scatter(range(10560),y_test_vector,c='g')
+plt.scatter(range(10560),predictions_vector,c='r')
+#plt.scatter(range(10560),y_test_vector,c='g')
+plt.show()
+#for i in range(22):
+    #print(np.argmax(predictions[i]))
+
 
 
 

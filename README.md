@@ -8,3 +8,7 @@ Zusätzliche habe ich versucht mit Dropout Methoden und reduzieren der Trainings
 ## Justin - 09.12.2023
 https://youtu.be/j-3vuBynnOE?si=JZFp1YyRqzhwhikX hab ich noch gefunden zum Thema Trainingsdatensatz erstellen 
 https://youtu.be/WvoLTXIjBYU?si=QpeINelNyx-BYFI4
+
+## Justin, Paul, Tim - 14.12.2023
+Termin an der HSD
+Ergebnis: erster Erfolg beim Training des NN, erste Auswertungen
