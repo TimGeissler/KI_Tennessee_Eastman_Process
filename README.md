@@ -1,7 +1,10 @@
 # KI_Tennessee_Eastman_Process
 
 ## Paul - 17.12.2023
-Habe einen ersten Versuch nternommen unsere Daten einem LSTM-Modell zu übergeben. Bissher war das jedoch nicht erfolgreich. (Funktioniert, aber definitiv kein gutes Ergebnis)
+Habe einen ersten Versuch unternommen unsere Daten einem LSTM-Modell zu übergeben. Bissher war das jedoch nicht erfolgreich. (Funktioniert, aber definitiv kein gutes Ergebnis) 
+Das shuffeln jedes Zeitpunktes ist bei Zeitreihen problematisch, da dadurch der zeitliche Zusammenhang verloren geht. 
+
+Bei unserem gemeinsamer Datei habe ich eine Visualisierung mithilfe einer Heatmap hinzugefügt. 
 
 ## Tim - 14.12.2023
 Habe keine vernünftige Shuffle-Funktion finden können, der man auch einfach eine batch-Size übergeben kann. 
