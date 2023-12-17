@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import os
 import random
 
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+
 ####################################################################################
 
 # Funktion zum Einlesen einer Datei
@@ -196,6 +199,18 @@ plt.show()
 #for i in range(22):
     #print(np.argmax(predictions[i]))
 
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test_vector, predictions_vector)
+print('Confusion Matrix:')
+print(conf_matrix)
+
+#Heatmap 
+plt.figure(figsize=(12, 10))
+sns.heatmap(conf_matrix, annot=True, cmap='Blues', fmt='d')
+plt.xlabel('Vorhergesagt')
+plt.ylabel('Tatsächlich')
+plt.title('Confusion Matrix')
+plt.show()
 
 
 
