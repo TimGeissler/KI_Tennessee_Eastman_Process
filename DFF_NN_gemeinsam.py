@@ -10,8 +10,10 @@ import seaborn as sns
 ####################################################################################
 # Trainingsparameter
 
+test_Number = 7
 numberOfEpochs = 100
-batch_Size = 5
+batch_Size = 1
+learningRate = 0.001
 
 ####################################################################################
 
@@ -215,7 +217,7 @@ model.add(tf.keras.layers.Dense(128, activation = tf.nn.relu))
 # Ausgangsschicht des NN mit 22 Neuronen, da es 21 Fälle gibt. ie Aktivierungsfunktion ist hier eine Wahrscheinlichkeitsverteilung
 model.add(tf.keras.layers.Dense(22, activation = tf.nn.softmax))
 
-model.compile(optimizer='adam',
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learningRate),
              loss='categorical_crossentropy',
              metrics=['accuracy'])
 
@@ -228,7 +230,7 @@ model.compile(optimizer='adam',
 model.fit(x_train, y_train, epochs=numberOfEpochs,validation_data=(x_test, y_test))
 
 predictions = model.predict([x_test])
-print(predictions.shape)
+#print(predictions.shape)
 
 predictions_vector = []
 y_test_vector = []
@@ -242,14 +244,17 @@ y_test_vector = np.array(y_test_vector)
 plt.scatter(range(10560),y_test_vector,c='g')
 plt.scatter(range(10560),predictions_vector,c='r')
 #plt.scatter(range(10560),y_test_vector,c='g')
-plt.show()
+#plt.show()
+path_scatter = 'Plots\\ScatterPlot\\' + str(test_Number) + '.png'
+if not os.path.exists(path_scatter):
+    plt.savefig(path_scatter)
 #for i in range(22):
     #print(np.argmax(predictions[i]))
 
 # Confusion Matrix
 conf_matrix = confusion_matrix(y_test_vector, predictions_vector)
-print('Confusion Matrix:')
-print(conf_matrix)
+#print('Confusion Matrix:')
+#print(conf_matrix)
 
 #Heatmap 
 plt.figure(figsize=(12, 10))
@@ -257,7 +262,10 @@ sns.heatmap(conf_matrix, annot=True, cmap='Blues', fmt='d')
 plt.xlabel('Vorhergesagt')
 plt.ylabel('Tatsächlich')
 plt.title('Confusion Matrix')
-plt.show()
+#plt.show()
+path_heatmap = 'Plots\\Heatmap (ConfusionMatrix)\\' + str(test_Number) + '.png'
+if not os.path.exists(path_heatmap):
+    plt.savefig(path_heatmap)
 
 
 
