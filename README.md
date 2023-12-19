@@ -1,5 +1,9 @@
 # KI_Tennessee_Eastman_Process
 
+## Tim - 19.12.2023
+Funktion zum Shufflen mit batch size wurde getestet und im gemeinsamen Programm implementiert.
+Kleine Nachbearbeitung, sodass bei schlecht gewählter batch size keine Daten aus der ursprünglichen Liste verloren gehen.
+
 ## Paul - 17.12.2023
 Habe einen ersten Versuch unternommen unsere Daten einem LSTM-Modell zu übergeben. Bissher war das jedoch nicht erfolgreich. (Funktioniert, aber definitiv kein gutes Ergebnis) 
 Das shuffeln jedes Zeitpunktes ist bei Zeitreihen problematisch, da dadurch der zeitliche Zusammenhang verloren geht. 
