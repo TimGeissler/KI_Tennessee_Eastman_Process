@@ -1,0 +1,29 @@
+# Notizen aus Tutorium
+# hist = model.fit()...
+# plot_hist(hist.history)
+# 
+# DOCS von tensorflow model.fit() lesen
+# shuffle und batch size als parameter von model.fit()
+# workers...?
+# 
+# np.vstack/hstack statt .append
+#
+# Aufbau des Modells besser mit Klassen und mehreren Files
+# 
+# callbacks = Rückmeldung an bestimmten Punkten
+# 
+# bei mehreren Projekte virtual Environments aufbauen
+# requirements.txt
+# 
+# (480-m)x[52,m] -> (480-m)x[Fehler]
+# [480, n, 52]
+#
+# TimeSeriesGenerator
+# 
+# tensorflow load data with numpy
+#
+# Forschungsfragen zu Beginn der Ausarbeitung stellen und eventuell näher darauf eingehen
+#
+#
+#
+#
