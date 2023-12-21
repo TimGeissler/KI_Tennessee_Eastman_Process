@@ -10,10 +10,10 @@ import seaborn as sns
 ####################################################################################
 # Trainingsparameter
 
-test_Number = 7
-numberOfEpochs = 100
-batch_Size = 1
-learningRate = 0.001
+test_Number = 25
+numberOfEpochs = 200
+batch_Size = 10
+learningRate = 0.1
 
 ####################################################################################
 
@@ -248,6 +248,9 @@ plt.scatter(range(10560),predictions_vector,c='r')
 path_scatter = 'Plots\\ScatterPlot\\' + str(test_Number) + '.png'
 if not os.path.exists(path_scatter):
     plt.savefig(path_scatter)
+else:
+    print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
+
 #for i in range(22):
     #print(np.argmax(predictions[i]))
 
@@ -266,6 +269,8 @@ plt.title('Confusion Matrix')
 path_heatmap = 'Plots\\Heatmap (ConfusionMatrix)\\' + str(test_Number) + '.png'
 if not os.path.exists(path_heatmap):
     plt.savefig(path_heatmap)
+else:
+    print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
 
 
 
