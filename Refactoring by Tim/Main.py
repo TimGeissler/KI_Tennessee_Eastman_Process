@@ -7,7 +7,15 @@ import random
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
+import ReadData as read
+import EditData as edit
+
 ####################################################################################
+# Organisatorisches
+#RELPATH = 'C:\\Path\\if\\files\\are\\on\\your\\PC\\'
+RELPATH = 'Dataset\\'
+
+
 # Trainingsparameter
 
 test_Number = 25
@@ -18,89 +26,16 @@ learningRate = 0.001
 ####################################################################################
 
 # Funktion zum Einlesen einer Datei
-def load_dat(path, input_end, crop_start, crop_stop):
-    try:
-        with open(path, 'r') as file:
-            # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
-            lines = file.read().splitlines()
 
-            # Die Daten in eine Matrix umwandeln
-            data = [list(map(float, line.split()[:input_end])) for line in lines]
-            data = np.array(data)
+data_raw, dataTE_raw = read.loadDataFromDirectory(RELPATH, 480, 0, 480)
 
-            # Format ermitteln und ggf. transponieren
-            size = (len(data), len(data[0]))
-            if (size[0] > 52):
-                      data = np.transpose(data)
-            
-            data = data[crop_start:crop_stop]
-
-        # Größe der neuen Matrix ausgeben
-        #new_size = (len(data), len(data[0]))
-        #print(f"Größe der Trainingsdaten Matrix: {new_size}")
-        return data
-
-    except FileNotFoundError:
-        print(f'Die Datei {path} wurde nicht gefunden.')
-
-    except Exception as e:
-        print(f'Fehler beim Lesen der Datei: {str(e)}')
-
-
-#RELPATH = 'C:\\Path\\if\\files\\are\\on\\your\\PC\\'
-RELPATH = 'Dataset\\'
-
-data_raw = []
-dataTE_raw = []
-
-# Dateien einlesen
-for datei in sorted(os.listdir(RELPATH)):
-    filePath = RELPATH + datei
-
-    #print('Look, i found a file: ' + filePath)
-
-    if 'te' in datei:
-        data_matrix = load_dat(filePath, 480, 0, 480)
-        dataTE_raw.append(data_matrix)
-    else:
-        data_matrix = load_dat(filePath, 480, 0, 480)
-        data_raw.append(data_matrix)
-
-
-data_raw = np.array(data_raw)
-dataTE_raw = np.array(dataTE_raw)
 
 ####################################################################################
 
 # normieren
-data_norm = []
-dataTE_norm = []
+data_norm = edit.datensatzNormieren(data_raw)
+dataTE_norm = edit.datensatzNormieren(dataTE_raw)
 
-for i in range(22):
-    array2ndD = []
-    array2ndDTE = []
-
-    for k in range(52):
-        normOfSensorData = np.linalg.norm(data_raw[i][k])
-        normOfSensorDataTE = np.linalg.norm(dataTE_raw[i][k])
-        meanOfSensorData = np.mean(data_raw[i][k])
-        meanOfSensorDataTE = np.mean(dataTE_raw[i][k])
-        
-        array3rdD = []
-        array3rdDTE = []
-            
-        for m in range(480):
-            array3rdD.append((data_raw[i][k][m] - meanOfSensorData)/normOfSensorData)
-            array3rdDTE.append((dataTE_raw[i][k][m] - meanOfSensorDataTE)/normOfSensorDataTE) ### clean up
-
-        array2ndD.append(array3rdD)
-        array2ndDTE.append(array3rdDTE)
-
-    data_norm.append(array2ndD)
-    dataTE_norm.append(array2ndDTE)
-
-data_norm = np.array(data_norm)
-dataTE_norm = np.array(dataTE_norm)
 
 
 # Debug 
@@ -132,46 +67,8 @@ for i in range(22):
 
 ####################################################################################
 # durchmischen
-            
-def shuffleWithBatchSize(pList, pBatchSize):
-    # Autor: TG, 19.12.2023
-    # Die Funktion nimmt eine übergebene Liste und gibt eine durchmischte Liste zurück.
-    # Bei der Durchmischung werden immer <pBatchSize> ursprüngliche Werte zu einem Batch zusammengefasst.
-    # Im Anschluss werden diese Batches vermischt und anschließend zu einer Liste der ursprünglichen Form zusammengefasst.
-    # Falls eine BatchSize gewählt wurde, die kein Teiler der Listengröße ist, so wird ein (bzw. der letzte) Batch entsprechend kleiner, da er den Rest der Werte enthält.
 
-
-    # Stelle sicher, dass die Batch-Größe kleiner oder gleich der Länge der Liste ist
-    batch_size_true = min(pBatchSize, len(pList))
-    
-    # Bestimme die Anzahl der Batches
-    # Falls Batchgröße kein Teiler der Listenlänge ist, addiere 1 um letzte Werte in kleinerem Batch zu sammeln
-    num_batches = len(pList) // batch_size_true
-    if (num_batches*batch_size_true < len(pList)):
-        num_batches += 1
-
-    # Erzeuge Batches
-    batches = []
-    for i in range(num_batches):
-        batch = []
-        for k in range(batch_size_true):
-            index = i*batch_size_true + k
-            if (index < len(pList)):
-                batch.append(pList[index])
-        batches.append(batch)
-
-    # Durchmische Batches
-    random.shuffle(batches)
-
-    # Kombiniere die durchmischten Batches zu einer durchmischten Liste
-    shuffled_list = []
-    for batch in batches:
-        for item in batch:
-            shuffled_list.append(item)
-
-    return shuffled_list
-
-training_data = shuffleWithBatchSize(training_data, batch_Size) # anpassen mit tf-Funktion mit batch-size etc.
+training_data = edit.shuffleWithBatchSize(training_data, batch_Size) # anpassen mit tf-Funktion mit batch-size etc.
 
 ####################################################################################
 
