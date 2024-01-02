@@ -14,41 +14,34 @@ import Evaluation
 #RELPATH = 'C:\\Path\\if\\files\\are\\on\\your\\PC\\'
 RELPATH = 'Dataset\\'
 
-
 # Trainingsparameter
 
-test_Number = 700
+test_Number = 7
 numberOfEpochs = 200
-batch_Size = 10
+batch_Size = 1
 learningRate = 0.001
+numberOfHiddenLayers = 2
+neuronsPerHiddenLayer = 128
+dropout = 0.0
 
 ####################################################################################
-
-# Funktion zum Einlesen einer Datei
+### Funktion zum Einlesen der Dateien
 
 data_raw, dataTE_raw = ReadData.loadDataFromDirectory(RELPATH, 480, 0, 480)
 
 
 ####################################################################################
-
-# normieren
+### normieren
 data_norm = EditData.datensatzNormieren(data_raw)
 dataTE_norm = EditData.datensatzNormieren(dataTE_raw)
 
 ####################################################################################
-
-# aus normierter Matrix Trainigsdaten erstellen
+### aus normierter Matrix Trainigsdaten erstellen
 
 training_data = TrainingData.CreateDatasetWithLabels(data_norm)
 test_data = TrainingData.CreateDatasetWithLabels(dataTE_norm)
 
 ####################################################################################
-# Trainingsdaten durchmischen -> jetzt in model.fit Methode
-
-#training_data = edit.shuffleWithBatchSize(training_data, batch_Size) # anpassen mit tf-Funktion mit batch-size etc.
-
-####################################################################################
-
 ### Training and test data
 
 x_train, y_train = TrainingData.GetXYFromDataset(training_data)
@@ -77,9 +70,13 @@ x_test, y_test = TrainingData.GetXYFromDataset(test_data)
 #              loss='categorical_crossentropy',
 #              metrics=['accuracy'])
 
-model = ModelDFF.ModelDFF(0.001, True).model
+model = ModelDFF.ModelDFF(learningRate=learningRate, 
+                          dynamicLearningRate=False, 
+                          dropout=dropout, 
+                          numberOfHiddenLayers=numberOfHiddenLayers, 
+                          neuronsPerHiddenLayer=neuronsPerHiddenLayer).model
 
-model.fit(x_train, 
+history = model.fit(x_train, 
           y_train, 
           epochs=numberOfEpochs,
           validation_data=(x_test, y_test),
@@ -87,14 +84,17 @@ model.fit(x_train,
           batch_size=batch_Size
           )
 
-predictions = model.predict([x_test])
-#print(predictions.shape)
+path_hist_without_suffix = 'Plots_2\\History\\' + str(test_Number) 
+Evaluation.makeHistoryPlot(history, path_hist_without_suffix)
 
-path_scatter = 'Plots\\ScatterPlot\\' + str(test_Number) + '.png'
+
+predictions = model.predict([x_test])
+
+path_scatter = 'Plots_2\\ScatterPlot\\' + str(test_Number) + '.png'
 Evaluation.makeScatterPlot(predictions, y_test, path_scatter)
 
 #Heatmap 
-path_heatmap = 'Plots\\Heatmap (ConfusionMatrix)\\' + str(test_Number) + '.png'
+path_heatmap = 'Plots_2\\Heatmap (ConfusionMatrix)\\' + str(test_Number) + '.png'
 Evaluation.makeConfMatrixPlot(predictions, y_test, path_heatmap)
 
 

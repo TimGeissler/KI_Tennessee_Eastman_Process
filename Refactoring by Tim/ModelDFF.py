@@ -1,12 +1,24 @@
 import tensorflow as tf
 
 class ModelDFF:
-    def __init__(self, learningRate, dynamicLearningRate=False):
+    def __init__(self, learningRate, dynamicLearningRate=False, dropout=0.0, numberOfHiddenLayers=2, neuronsPerHiddenLayer=128):
+        firstHalfOfLayers = round(numberOfHiddenLayers/2)
+        secondHalfOfLayers = numberOfHiddenLayers - firstHalfOfLayers
+
         self.model = tf.keras.models.Sequential()
         self.model.add(tf.keras.layers.Dense(52,  activation=tf.nn.relu))
-        self.model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
-        self.model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+
+        for i in range(firstHalfOfLayers):
+            self.model.add(tf.keras.layers.Dense(neuronsPerHiddenLayer, activation=tf.nn.relu))
+
+        self.model.add(tf.keras.layers.Dropout(dropout))
+
+        for k in range(secondHalfOfLayers):
+            self.model.add(tf.keras.layers.Dense(neuronsPerHiddenLayer, activation=tf.nn.relu))
+
         self.model.add(tf.keras.layers.Dense(22,  activation=tf.nn.softmax))
+
+
 
         if (dynamicLearningRate):
             lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(

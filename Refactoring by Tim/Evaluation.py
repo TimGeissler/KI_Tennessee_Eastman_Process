@@ -25,6 +25,7 @@ def makeScatterPlot(predictions, labels, path):
     else:
         print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
 
+    plt.close()
 
 def makeConfMatrixPlot(predictions, labels, path):
     predictions_vector, y_test_vector = matchPredictionsWithLabels(predictions, labels)
@@ -42,5 +43,34 @@ def makeConfMatrixPlot(predictions, labels, path):
     else:
         print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
 
+    plt.close()
+
+def makeHistoryPlot(history, path):
+    # Plot des Trainingsverlaufs
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.legend()
+
+    if not os.path.exists(path):
+        plt.savefig(path + '_Losses.png')
+    else:
+        print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
+
+    plt.close()
+
+
+
+    plt.plot(history.history['accuracy'], label='Training Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend()
+
+    if not os.path.exists(path):
+        plt.savefig(path + '_Accuracy.png')
+    else:
+        print('WARNING: file already exists and will not be overwritten. Please change the testNumber')
+
+    plt.close()
 
 

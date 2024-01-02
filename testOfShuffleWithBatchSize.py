@@ -41,3 +41,5 @@ def shuffleWithBatchSize(pList, pBatchSize):
 
 testList = np.arange(25)
 print(shuffleWithBatchSize(testList, 6))
+
+print(round(5/2))
