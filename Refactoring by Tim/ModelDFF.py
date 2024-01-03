@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 class ModelDFF:
-    def __init__(self, learningRate, dynamicLearningRate=False, dropout=0.0, numberOfHiddenLayers=2, neuronsPerHiddenLayer=128):
+    def __init__(self, learningRate, dynamicLearningRate=False, decayRate = 0.98, decaySteps=1000, dropout=0.0, numberOfHiddenLayers=2, neuronsPerHiddenLayer=128):
         firstHalfOfLayers = round(numberOfHiddenLayers/2)
         secondHalfOfLayers = numberOfHiddenLayers - firstHalfOfLayers
 
@@ -23,8 +23,8 @@ class ModelDFF:
         if (dynamicLearningRate):
             lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
                 initial_learning_rate=learningRate,
-                decay_steps=100,
-                decay_rate=0.96
+                decay_steps=decaySteps,
+                decay_rate=decayRate
             )
             self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
                         loss='categorical_crossentropy',
