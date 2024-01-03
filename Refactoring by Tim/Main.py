@@ -15,21 +15,21 @@ RELPATH = 'Dataset\\'
 
 # Trainingsparameter
 
-test_Number = 9
-numberOfEpochs = 50
+test_Number = 66
+numberOfEpochs = 300
 
-batch_Size = 15
+batch_Size = 20
 batch_Size_Predict = batch_Size
 
-learningRate = 0.005
-dynamicLearningRate = True
+learningRate = 0.001
+dynamicLearningRate = False
 decaySteps = 1000
 decayRate = 0.98
 
 numberOfHiddenLayers = 2
-neuronsPerHiddenLayer = 128
+neuronsPerHiddenLayer = 256
 
-dropout = 0.2
+dropout = 0.8
 
 ####################################################################################
 ### Funktion zum Einlesen der Dateien
