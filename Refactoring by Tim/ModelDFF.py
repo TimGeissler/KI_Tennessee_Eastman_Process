@@ -1,6 +1,12 @@
 import tensorflow as tf
 
 class ModelDFF:
+    # Mit dieser Klasse soll ein eifachen neuronales Netz erstellt und kompiliert werden.
+    # Dabei können bei der Erstellung folgende Parameter eingestellt werden:
+    # - learningRate bzw. initiale learningRate, wenn diese exponentiell abnehmen soll
+    # - wie viele Layer und Neuronen pro Layer vorhanden sein sollen
+    # - dropout des Dropout-Layers in der Mitte des Netzes
+    
     def __init__(self, learningRate, dynamicLearningRate=False, decayRate = 0.98, decaySteps=1000, dropout=0.0, numberOfHiddenLayers=2, neuronsPerHiddenLayer=128):
         firstHalfOfLayers = round(numberOfHiddenLayers/2)
         secondHalfOfLayers = numberOfHiddenLayers - firstHalfOfLayers

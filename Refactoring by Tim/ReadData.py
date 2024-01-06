@@ -2,6 +2,8 @@ import numpy as np
 import os
 
 def loadDataFromFile(path, input_end, crop_start, crop_stop):
+    # Funktion zum Einlesen eines Datensatzes, der sich in einer Datei befindet und Rückgabe als Matrix.
+
     try:
         with open(path, 'r') as file:
             # Zeilen aus der Datei lesen und in eine Liste von Zeichenketten aufteilen
@@ -17,10 +19,6 @@ def loadDataFromFile(path, input_end, crop_start, crop_stop):
                 data = np.transpose(data)
             
             data = data[crop_start:crop_stop]
-
-        # Größe der neuen Matrix ausgeben
-        #new_size = (len(data), len(data[0]))
-        #print(f"Größe der Trainingsdaten Matrix: {new_size}")
         return data
 
     except FileNotFoundError:
@@ -30,6 +28,9 @@ def loadDataFromFile(path, input_end, crop_start, crop_stop):
         print(f'Fehler beim Lesen der Datei: {str(e)}')
 
 def loadDataFromDirectory(path, input_end, crop_start, crop_stop):
+    # Einlesen von allen Datensätzen aus allen Dateien in einem Verzeichnis.
+    # Dazu werden sie je nach Dateiname in Trainings- und Testdaten aufgeteilt und in Form von zwei Arrays zurückgegeben.
+    
     data = []
     dataTE = []
 

@@ -4,6 +4,12 @@ import random
 
 
 def datensatzNormieren(array):
+    # Die Funktion ist zugeschnitten auf die gegebenen Datensätze und normiert diese.
+    # Zunächst wird die letzte Dimension des Datensatzes (480 Zeitpunkte eines Sensorwertes) 
+    # um seinen Median verschoben und anschließend normiert.
+    # Im Anschluss werden die einzeln verschobenen und normierten Werte wieder zusammengestzt, 
+    # sodass die ursprüngliche Form des Datensatzes wiederhergestellt ist und als numpy-Array zurückgegeben werden kann.
+
     dataInput = np.array(array)
     data_norm = []
     
